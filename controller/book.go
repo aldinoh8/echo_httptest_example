@@ -2,6 +2,7 @@ package controller
 
 import (
 	"example/model"
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -19,10 +20,12 @@ func NewBookController(db *gorm.DB) BookController {
 func (c BookController) Create(ctx echo.Context) error {
 	newBook := model.Book{}
 	if err := ctx.Bind(&newBook); err != nil {
+		fmt.Println("err 1", err)
 		return ctx.JSON(http.StatusBadRequest, err)
 	}
 
 	if err := c.DB.Create(&newBook).Error; err != nil {
+		fmt.Println("err 2")
 		return ctx.JSON(http.StatusBadRequest, err)
 	}
 
@@ -31,7 +34,7 @@ func (c BookController) Create(ctx echo.Context) error {
 		"newBook": newBook,
 	}
 
-	return ctx.JSON(http.StatusOK, response)
+	return ctx.JSON(http.StatusCreated, response)
 }
 
 func (c BookController) Detail(ctx echo.Context) error {
@@ -69,7 +72,7 @@ func (c BookController) Delete(ctx echo.Context) error {
 		panic(result.Error)
 	}
 
-	return ctx.JSON(http.StatusOK, map[string]interface{}{
+	return ctx.JSON(http.StatusOK, map[string]string{
 		"message": "Success delete book",
 	})
 }

@@ -2,31 +2,31 @@ package controller
 
 import (
 	"example/model"
-	"fmt"
+	"example/repository"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
 
 type BookController struct {
-	DB *gorm.DB
+	Repository repository.BookRepository
 }
 
-func NewBookController(db *gorm.DB) BookController {
-	return BookController{DB: db}
+func NewBookController(r repository.BookRepository) BookController {
+	return BookController{Repository: r}
 }
 
 func (c BookController) Create(ctx echo.Context) error {
 	newBook := model.Book{}
 	if err := ctx.Bind(&newBook); err != nil {
-		fmt.Println("err 1", err)
 		return ctx.JSON(http.StatusBadRequest, err)
 	}
 
-	if err := c.DB.Create(&newBook).Error; err != nil {
-		fmt.Println("err 2")
-		return ctx.JSON(http.StatusBadRequest, err)
+	if err := c.Repository.Create(&newBook); err != nil {
+		return ctx.JSON(http.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
 	}
 
 	response := map[string]interface{}{
@@ -39,40 +39,34 @@ func (c BookController) Create(ctx echo.Context) error {
 
 func (c BookController) Detail(ctx echo.Context) error {
 	id := ctx.Param("id")
-	book := model.Book{}
-
-	result := c.DB.First(&book, id)
-	if result.RowsAffected == 0 {
-		return ctx.JSON(http.StatusNotFound, map[string]string{"Message": "Book Not Found"})
-	}
-	if result.Error != nil {
-		panic(result.Error)
+	idInt, _ := strconv.Atoi(id)
+	book, err := c.Repository.FindById(idInt)
+	if err != nil {
+		return ctx.JSON(http.StatusNotFound, map[string]string{
+			"message": err.Error(),
+		})
 	}
 
 	return ctx.JSON(http.StatusOK, book)
 }
 
 func (c BookController) Index(ctx echo.Context) error {
-	books := []model.Book{}
-	if err := c.DB.Find(&books).Error; err != nil {
-		panic(err)
-	}
+	books, _ := c.Repository.FindAll()
 
 	return ctx.JSON(http.StatusOK, books)
 }
 
 func (c BookController) Delete(ctx echo.Context) error {
 	id := ctx.Param("id")
+	idInt, _ := strconv.Atoi(id)
 
-	result := c.DB.Delete(&model.Book{}, id)
-	if result.RowsAffected == 0 {
-		return ctx.JSON(http.StatusNotFound, map[string]string{"Message": "Book Not Found"})
-	}
-	if result.Error != nil {
-		panic(result.Error)
+	if err := c.Repository.Delete(idInt); err != nil {
+		return ctx.JSON(http.StatusNotFound, map[string]string{
+			"message": err.Error(),
+		})
 	}
 
 	return ctx.JSON(http.StatusOK, map[string]string{
-		"message": "Success delete book",
+		"message": "success delete book",
 	})
 }

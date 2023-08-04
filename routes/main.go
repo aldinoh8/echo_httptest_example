@@ -2,6 +2,7 @@ package routes
 
 import (
 	"example/controller"
+	"example/repository"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -10,7 +11,9 @@ import (
 func InitApp(db *gorm.DB) *echo.Echo {
 	e := echo.New()
 
-	bookController := controller.NewBookController(db)
+	bookRepository := repository.NewBook(db)
+	bookController := controller.NewBookController(bookRepository)
+
 	bookRoute := e.Group("/books")
 	bookRoute.POST("", bookController.Create)
 	bookRoute.GET("", bookController.Index)

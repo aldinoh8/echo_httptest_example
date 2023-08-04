@@ -89,7 +89,7 @@ func TestFindDetailBook(t *testing.T) {
 
 		assert.Equal(t, http.StatusNotFound, response.StatusCode)
 		assert.NotEmpty(t, responseBody)
-		assert.Equal(t, "Book Not Found", responseBody["Message"])
+		assert.Equal(t, "book not found", responseBody["message"])
 	})
 }
 
@@ -140,7 +140,7 @@ func TestDelete(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, response.StatusCode)
 		assert.NotEmpty(t, responseBody)
-		assert.Equal(t, "Success delete book", responseBody["message"])
+		assert.Equal(t, "success delete book", responseBody["message"])
 
 		var afterCount int64
 		db.Find(&model.Book{}).Count(&afterCount)
@@ -163,7 +163,7 @@ func TestDelete(t *testing.T) {
 
 		assert.Equal(t, http.StatusNotFound, response.StatusCode)
 		assert.NotEmpty(t, responseBody)
-		assert.Equal(t, "Book Not Found", responseBody["Message"])
+		assert.Equal(t, "book not found", responseBody["message"])
 
 		var afterCount int64
 		db.Find(&model.Book{}).Count(&afterCount)

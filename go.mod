@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/labstack/echo/v4 v4.7.2
+	github.com/stretchr/testify v1.8.4
 	gorm.io/driver/postgres v1.3.4
 	gorm.io/gorm v1.23.4
 )
@@ -25,7 +26,6 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
-	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
